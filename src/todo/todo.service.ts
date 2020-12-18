@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './models/todo.model';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { Repository } from 'typeorm';
+import { SearchTodoDto } from  './dto/search-todo.dto';
+import { Like, Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -40,9 +41,15 @@ export class TodoService {
     return await this.TodoRepository.find();
   }
 
-  // getFakeTodoById(id: number) {
-  //   return this.findTodoById(id);
-  // }
+  async findSearchedTodo(searchFilter: SearchTodoDto) {
+    const todos = await this.TodoRepository.find(
+      {
+        description:Like(`%${searchFilter.description}%`),
+        status: searchFilter.status      
+      });
+      return todos;
+      throw new NotFoundException(`Le todo avec recherchée n'existe pas`);
+  }
 
   async findTodoById(id:number) {
     const todos = await this.TodoRepository.find({id});
@@ -68,12 +75,6 @@ export class TodoService {
   }
 
 
-  // deleteFakeTodo(id: number): Todo[] {
-  //   const todo = this.findTodoById(id);
-  //
-  //   this.todos.splice(this.todos.indexOf(todo), 1);
-  //   return this.todos;
-  // }
   async deleteTodo(id: number) {
     return await this.TodoRepository.softDelete(id);
   }

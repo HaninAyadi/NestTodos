@@ -4,6 +4,7 @@ import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoService } from './todo.service';
 import { FirstPipe } from '../pipes/first.pipe';
 import { TodoEntity } from './entities/todo.entity';
+import { SearchTodoDto } from './dto/search-todo.dto';
 
 
 
@@ -24,6 +25,13 @@ export class TodoController {
     @Param('id') id: number
   ) {
     return this.todoService.findTodoById(id);
+  }
+
+  @Post('/search')
+    searchTodo(
+        @Body() searchedTodo: SearchTodoDto
+    ) {
+        return this.todoService.findSearchedTodo(searchedTodo);
   }
 
   @Get('restore/:id')
